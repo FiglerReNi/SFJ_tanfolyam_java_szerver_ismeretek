@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app version="3.0"
+  xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+ 
+<!-- Milyen servletek léteznek, itt soroljuk fel ez mindig a classesben lévő kódra utal, ezért fontos mindig lefordítani-->
+   <servlet>
+      <servlet-name>Servlet1</servlet-name>
+      <servlet-class>test.HelloServlet</servlet-class>
+   </servlet>
+   
+   <servlet>
+      <servlet-name>Servlet2</servlet-name>
+      <servlet-class>test.EchoServlet</servlet-class>
+   </servlet>
+ <!-- A honlapon mit ír be és az hová vezet -->
+   <servlet-mapping>
+      <servlet-name>Servlet1</servlet-name>
+      <url-pattern>/mutasd</url-pattern>
+   </servlet-mapping>
+   
+   <servlet-mapping>
+      <servlet-name>Servlet2</servlet-name>
+      <url-pattern>/echo</url-pattern>
+   </servlet-mapping>
+</web-app>
