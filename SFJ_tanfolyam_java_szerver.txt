@@ -1,0 +1,159 @@
+SFJ_tanfolyam_java_szerver
+
+2.video
+  Socket: Objektum, amit a java program használ, hogy kommunikálni tudjon távoli eszközzel. Küld valamit az én gépemen 	  	          futó java program ennek segítségével, amit egy másik gép java programja fogadni tud. Ehhez az kell, hogy mindkét 	  gépen telepítve legyen a program.
+  Internet: Ha mindenki számára elérhetõvé szeretnénk tenni a programunkat, a böngészõben mutatjuk meg és tesszü 	    	    használhatóvá.
+ A böngészõ, vagy egy mobilapp a kapu. A háttérben ugyanaz a program fut, ami a logikát adja.
+  Szerver (Kiszolgáló): A háttérben futó program/logika, ide jutunk a böngészõn, appon (egyszóval: nézet) keresztül.                               Adattárolás, kalkuláció, hozzáférés stb a feladata. A servernek van egy IP címe, amin keresztül                            elérhetjük és van egy domain neve is, ezt szoktuk beírni a böngészõ címsorába, de ha tudjuk az IP                          címet és azt írjuk be is ugyanoda vezet. Példa cmd -> ping vmilyen webcím (adatcsomagokat küld, így kipróbálható, hogy tényleg létezik-e a webcím és az IP-t is megkapjuk.)
+ 
+
+3.video
+   Az adatok részletekben érkeznek meg a szerverrõl.
+   Két féle csatornán történhet ez meg: UDP és TCP
+	UDP - skype, sportközvetítés, ahol az adatáramlásban nincs ellenõrzés, néha kimaradhat egy-egy részlet, az a       	fontos, hogy menjen
+	TCP - lassabb a kommunikáció, mert folyamatos rákérdezés van az adatcsomagokra, hogy rendben megérkeztek-e. A      	szerver újraküldi ami nem érkezett meg.
+  Domain név - szerver ip címéhez van hozzárendelve, hogy ne az IP címet kelljen beütni a böngészõbe. Ezek fix IP címek.
+  A lakossági felhasználónak folyamatosan változó IP címük van általában, a fix jóval drágább. De ez elég is az              internetezéshez, mert a másik oldalon lévõ fix IP-t elég tudnunk errõl az oldalról. Dinamikus ip-hez is lehet domain-t     regisztrálni csak jóval bonyolultabb.
+  Amikor elsõ alkalommal ütün be egy oldalt, hosszabb idõ amíg elérjük. Másodszorra már le van tárolva a gépen, hogy ahhoz a domain-hez milyen IP tartozik és már automatikusan ezzel indítjuk el a kérést. A kérésben vannak adatok, a routerem IP címe például, hogy hová kell majd visszaadni az adatot. 
+	Request: a kérés, benne az IP címemel
+	Response: a válasz, amely apró adatcsomagokból áll. Ez a routerhez érkezik meg, és a router tudja, hogy a 			hálózatban melyik géphez kell az üzenetet eljuttatni.
+  Az adat közel fénysebességgel halad az optikai kábelekben.
+  A request és response is két részbõl áll:
+	header - 
+	body - ami magát az adatot tartalmazza. (pl html+css+js) A böngészõ ebbõl tudja összeállítani az oldalt. Ma már 		jobban terhelhetõek a böngészõk mint régebben voltak, mert a felhasználók gépe nagyobb teljesítményû, így a szerver helyett sok mindent át lehet adni a böngészõnek (régen szinte mindent a szerver végzett). A böngészõ tudja futtatni a javascriptet.
+
+4.video
+HTTP státusz kódok:
+	headerben ékeznek a response-ban (válaszban)
+	1xx - informatív leírás
+	2xx - minden rendben
+		200 - a kérés értelmezve lett és a ráadott válasz is ok
+		204 - minden ok a kéréssel, de nem kell visszaadni választ
+	3xx - át leszünk irányítva valahová
+		301 - a tartalom új címre költözött és átirányítás történik
+		307 - ideiglenes átirányítás (nem végleges az új cím)
+	4xx - kliens oldali hiba
+		400 - hibás lekérdezés
+		401 - nincs jogosultság a válasz megtekintésére, ilyenkor ált. autentikációra van szükség.
+		403 - tiltott elérés (akár autentikál akár nem a felhasználó), nem engedélyezett számára a válasz elérése
+		404 - nem található
+	5xx - szerver oldali hiba
+		500 - belsõ szerver hiba, nem kapunk választ	
+		503 - a szolgáltatás nem elérhetõ
+F12 - böngészõ fejlesztõi segédje
+Cachelés - bizonyos dolgokat pl képet egy oldalról elment a böngészõ, és legközelebb innen tölti be --> gyorsabb lesz, viszont ha frissítik az oldalt új képpel stb, az nem fog befrissülni. --> Fontos, hogy mit engedünk cachel-ni és mit nem. Inkognitó módban nem cachel a böngészõ. A számítógépen nem hagy nyomot ez a módszer. De pl ha egy munkahelyen monitorozzák a böngészést ott lászódni fog a meglátogatott weboldal.
+A serverek a html-en kívül rengeteg mindent visszaadhatnak, pl css-t, mp3-at stb. 
+MIME type
+Ez is a response headerjében info, hogy mit ad vissza a szerver, ez segít a böngészõnek, pl ha pdf-et kap vissza meg tudjuk nyitni a böngészõben pdf-ként ---> ehhez tudnia kell mit kap (típus)
+	text/html
+	audio/mp3
+	image/jpeg
+Vannak olyan szerverek, amelyek egyáltalán nem adnak vissza html-t, mert pl vannak mobilalkalmazások amelyek webesek és html-t használnak, de vannak a native mobilalkalmazások.
+Ezek az Iphone/Android grafikus elemeit használják és a szervertõl csak adatokat kérnek le. A válasz egyszerû xml vagy json lesz.
+webszerver - html alapú
+soap/rest szerver - xml/json
+
+5.video
+Szerverek közötti kommunikáció, adatáramlás lehetõsége (mindegy milyen nyelven vannak írva): xml, json, yaml
+A szerverek a megkapott xml, json adatot egy parser segítségével tudják kibontani a saját nyelvüknek megfelelõen és állítják össze belõle az objektumot.
+Az xml és json minden nyelvben ugyanúgy fog kinézni.
+Xml - JSON konverterrel megnézhetjük egy adott adatot amit küldeni akarunk mindkét formában.
+JSON validátorral pedig ellenõrizhetjük, hogy helyes-e a formátuma (szerkezete).
+xml - olvashatóbb
+json - kevesebb karater, képes különbséget tenni, hogy egy számot számként vagy szövegként küldök
+yaml - még kevesebb karakter, kapcsos zárójelek nélkül
+
+6.video
+Java keretrendszerek
+	Java EE - eredeti Oracle termék
+		- csak alkalmazás szerveren futtatható: pl. glassfish, jboss, wildfly
+	Spring  - nyílt forráskódú
+		- egyszerû szerveren is fut mint a Tomcat
+Servlet: java objetum, amely tud http kérést feldolgozni és tud is rá válaszolni, bele van programozva.
+Tomcat: egy keretrendszer amin képes futni a spring.
+	Részei: Catalina (itt fut a kód, benne a servlet)
+		Coyote (a kapu, fogadja a kéréseket és küldi az adatot, közvetít a Catalina felé)
+Tomcat-et önmagában is tölthetünk le, de a xampp-ban is benne van.
+Beállítások->
+conf mappa, server.xml -> connector: itt lehet megadni a localhost port számát, amin keresztül elérjük a böngészõt.
+
+7.video
+conf mappa, tomcat-users.xml -> itt tudjuk megadni a jogosultságokat
+<role rolename="manager-gui"/>
+<role rolename="manager-script"/>
+<role rolename="manager-jmx"/>
+<role rolename="manager-status"/>
+<role rolename="admin-gui"/>
+<role rolename="admin-script"/>
+<user username="admin" password="admin" roles="manager-gui,manager-script,manager-jmx,manager-status,admin-gui,admin-script"/>
+Ha csak a tomcat-et telepítettünk:
+indítás:  cmd -> tartalmazó mappa(tomcat/bin) -> startup.bat
+A mûködéshez környezeti változóna be kell állítani:
+Rendszerváltozók alá:
+JAVA_HOME: C:\Program Files\Java\jdk1.8.0_144
+JRE_HOME: C:\Program Files\Java\jre1.8.0_231
+CATALINA_HOME: C:\Program Files\Java\xamppJavaTomcat\tomcat
+Saját változók:
+Path: C:\Program Files\Java\jdk1.8.0_144\bin;C:\Program Files\Java\jre1.8.0_231\bin
+Ha localhost:8080 esetleg 500-as hibát ad, akkor a tomcat mappán kell megnézni a user jogosultságokat
+
+8.video
+Példa servletek: http://localhost:8080/examples/servlets/
+Server oldali alkalmazás írása keretrendszer nélkül
+	Van egy kötelezõ felépítése: A tomcat-ben van egy webapps mappa, ami a webalkalmazások mappája, ebbe hozzuk létre a saját alkalmazásun mappáját. ElsoAlkalmazas (ez lesz a saját servletünk). A webapps mappában vannak már servletek, ezeket lárjuk megjelenni a tomcat oldalaként amikor elindítjuk a localhost:8080-at.
+ElsoAlkalmazas
+	WEB-INF
+	- src (kódot tárolja .java)
+		- package mappák (egyezik a fájlban a package nevével)
+			- .java fájlok (egyezik az osztály nevével)
+	- lib (függõségek/dependency pl.:itext)	
+	- classes (lefordult kód .class) --> ebbõl lesz a jar fajl
+	- web.xml
+	META-INF
+Ami a web- és meta-inf mappákban van az nem elérhetõ a felhasználók számára, ami kívül az ElsoAlkalmazásban az igen (html, css, jsp, kép). Az src és classes mappa egymás tükörképei kell legyenek. A compiler fordítja le a .java-t .class-ra.
+
+9.video
+.java -> .class
+cmd --> web-inf mappa --> javac -d (destination, hová) classes src\test\HelloServlet.java (forrás)
+Amiket használok importként a fájlban, az kell létezzen az alkalmazásomban. A tomcat ezeket tartalmazza, csak át kell húznom ami kell. A C:\Program Files\Java\jdk1.8.0_144/jre/lib/ext mappába kell beletenni. Ez (jre) a futtatási környezet. Ha ez rendelkezik ezzel akkor az alkalmazásunk látni fogja.
+Ha nem tesszük át akkor cmd-ben meg kell adni ennek a jar fájlnak az útvonalát:
+	javac -d classes -cp ..\..\..\lib\servlet-api.jar src\test\HelloServlet.java 
+
+10.video
+web.xml: deployment descriptor (DD)
+	 útvonalak --> mit ír be a felhasználó és milyen servletet ér el ezzel
+	 servletek elnevezése, gyûjteménye
+
+11.video
+Get: paramétereket url-ben adjuk át, látható, elmenthetõ könyvjelzõként, limitált mennyi paraméter lehet.
+Post: nincs limit akár fájlokat is küldhetünk, könyvjelzõként nem menthetõ, valamivel biztonságosabb.
+action: mit hívjon meg, mi fogja feldolgozni az adatokat a form elküldése után.
+ElsoAlkalmazas/form.html --> form létrehozása, ezt közvetlenül eléri a felhasználó, mivel kívülre mentettük el.
+Ha elküljük a formot, a benne található értékek a request.getParameter() - el tudjuk kiszedni (olyan mint php-ben a $_GET[]).
+
+12.video
+web.xml-ben be kell állítani az echo servlethez az útvonalat.
+lefordítjuk a servletet
+HTTP method: 
+	GET
+	POST
+	PUT
+	DELETE
+	CONNECT stb.
+
+13.video
+Az xml alapú konfigurációt (web.xml-ben regisztráljuk a servleteket és az útvonalat) kiválthatjuk annotáció alapú konfigurációval is.Pl.: @WebServlet(name = "feldolgozas", urlPatterns = {"/feldolgozas/*"})
+A servlet egyszer van létrehozva és minden felhasználó ugyanazt a példányt fogja visszakapni.
+Singleton - egy példány él belõle a JVM-ben és mindenki ugyanarra az egy objektumra hivatkozik, az osztályváltozók értéke ugyanat lesz, nem kell külön static-re állítani. A servlet is így viselkedik, de nem minden esetben, ezért nem mondjuk rá, hogy singleton. Vannak speciális esetei.
+Servletben a doGet doPost-on kívül szoktuk használni és ezek is Override a getServletInfo (bármilyen infot beírhatunk amit ki akarunk íratni pl, ez függvény van visszatérési értéke), init (metódus, ez akkor fut le amikor a tomcat létrehozza az adott servletet, minden más elõtt tehát - ezért itt csinálhatjuk pl az adatbázis kapcsolatot, kiolvashatunk konfigurációs fájlból adatokat stb.), destroy (amikor a servlet elpusztul akkor fut le - kapcsolatok lezárása, pl. adatbázisé. Fontos, hogy minden olyan kapcsolatot lezárjunk amire van lehetõség. Az adatbázis kapcsolatnak timeout-ot is lehet beállítani, amikor automatikusan bontja a kapcsolatot. )
+
+14.video
+JSP - java server pages -> automatikusan generál egy servletet, a html-t fogslmszhstjuk meg benne és írhatunk bele java kódot is.
+Az alkalmazáson belül, de a WEB-INF mappán kívül hozzuk létre mint a sima html-t.
+Konfigurációs fájl beolvasása: Ebben szokták megadni például az adatbázis kapcsolódáshoz szükséges adatokat stb. Így ha valami változik csak itt kell módosítani. WEB-INF-en belül hozzuk létre, a web.xml mellé.
+
+15.video
+Postman: Szimulálni tudjuk egy szervernek küldött kérést, és látjuk a rá érkezett választ.
+	 Authorization fül alatt tudjuk kiválasztani milyen típusú autentikációt akarunk tesztelni
+Authentikáció: a felhasználó igazolja, hogy rendelkezik az eléréshez szükséges jogokkal, ezt megteheti pl egy username+password párossal. Ha ez nem sikeres egy http kóddal jelezhetjük, hogy megtagadjuk a válasz adását (pl. 401).
+Basic (access) authentication: A request headerjében tudjuk vizsgálni az autentikációt. Ha van, és küldött a felhasználó username + password párost itt tárolódik, innen tudjuk kiolvasni. De a header a username+password párost kódolva tartalmazza. (Base64 eljárással --> bináris adatot csinál). A szerver ezt vissza tudja fejteni. Ugyanabból a szóból mindig ugyanaz a kód lesz, feltörhetõ, de valamivel biztonságosabb, mint szimplán küldeni. Viszont ez nem elég ezért fontos hogy a kapcsolat https (-ssl/tls) kapcsolat legyen. Ez biztonságos kapcsolat. SSL vagy TLS segítségével titkosítva van az adat.
