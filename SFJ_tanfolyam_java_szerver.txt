@@ -31,9 +31,9 @@ lefordítjuk a servletet
 
 
 13.video
-Az xml alapú konfigurációt (web.xml-ben regisztráljuk a servleteket és az útvonalat) kiválthatjuk annotáció alapú konfigurációval is.Pl.: @WebServlet(name = "feldolgozas", urlPatterns = {"/feldolgozas/*"})
-A servlet egyszer van létrehozva és minden felhasználó ugyanazt a példányt fogja visszakapni.
-Singleton - egy példány él belőle a JVM-ben és mindenki ugyanarra az egy objektumra hivatkozik, az osztályváltozók értéke ugyanat lesz, nem kell külön static-re állítani. A servlet is így viselkedik, de nem minden esetben, ezért nem mondjuk rá, hogy singleton. Vannak speciális esetei.
+
+
+
 Servletben a doGet doPost-on kívül szoktuk használni és ezek is Override a getServletInfo (bármilyen infot beírhatunk amit ki akarunk íratni pl, ez függvény van visszatérési értéke), init (metódus, ez akkor fut le amikor a tomcat létrehozza az adott servletet, minden más előtt tehát - ezért itt csinálhatjuk pl az adatbázis kapcsolatot, kiolvashatunk konfigurációs fájlból adatokat stb.), destroy (amikor a servlet elpusztul akkor fut le - kapcsolatok lezárása, pl. adatbázisé. Fontos, hogy minden olyan kapcsolatot lezárjunk amire van lehetőség. Az adatbázis kapcsolatnak timeout-ot is lehet beállítani, amikor automatikusan bontja a kapcsolatot. )
 
 14.video
