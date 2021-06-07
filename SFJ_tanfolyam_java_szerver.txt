@@ -9,27 +9,10 @@
 
 
 
-8.video
-Példa servletek: http://localhost:8080/examples/servlets/
-Server oldali alkalmazás írása keretrendszer nélkül
-	Van egy kötelező felépítése: A tomcat-ben van egy webapps mappa, ami a webalkalmazások mappája, ebbe hozzuk létre a saját alkalmazásun mappáját. ElsoAlkalmazas (ez lesz a saját servletünk). A webapps mappában vannak már servletek, ezeket lárjuk megjelenni a tomcat oldalaként amikor elindítjuk a localhost:8080-at.
-ElsoAlkalmazas
-	WEB-INF
-	- src (kódot tárolja .java)
-		- package mappák (egyezik a fájlban a package nevével)
-			- .java fájlok (egyezik az osztály nevével)
-	- lib (függőségek/dependency pl.:itext)	
-	- classes (lefordult kód .class) --> ebből lesz a jar fajl
-	- web.xml
-	META-INF
-Ami a web- és meta-inf mappákban van az nem elérhető a felhasználók számára, ami kívül az ElsoAlkalmazásban az igen (html, css, jsp, kép). Az src és classes mappa egymás tükörképei kell legyenek. A compiler fordítja le a .java-t .class-ra.
 
-9.video
-.java -> .class
-cmd --> web-inf mappa --> javac -d (destination, hová) classes src\test\HelloServlet.java (forrás)
-Amiket használok importként a fájlban, az kell létezzen az alkalmazásomban. A tomcat ezeket tartalmazza, csak át kell húznom ami kell. A C:\Program Files\Java\jdk1.8.0_144/jre/lib/ext mappába kell beletenni. Ez (jre) a futtatási környezet. Ha ez rendelkezik ezzel akkor az alkalmazásunk látni fogja.
-Ha nem tesszük át akkor cmd-ben meg kell adni ennek a jar fájlnak az útvonalát:
-	javac -d classes -cp ..\..\..\lib\servlet-api.jar src\test\HelloServlet.java 
+
+
+
 
 10.video
 web.xml: deployment descriptor (DD)
