@@ -1,159 +1,59 @@
-SFJ_tanfolyam_java_szerver
 
-2.video
-  Socket: Objektum, amit a java program haszn·l, hogy kommunik·lni tudjon t·voli eszkˆzzel. K¸ld valamit az Èn gÈpemen 	  	          futÛ java program ennek segÌtsÈgÈvel, amit egy m·sik gÈp java programja fogadni tud. Ehhez az kell, hogy mindkÈt 	  gÈpen telepÌtve legyen a program.
-  Internet: Ha mindenki sz·m·ra elÈrhetıvÈ szeretnÈnk tenni a programunkat, a bˆngÈszıben mutatjuk meg Ès tessz¸ 	    	    haszn·lhatÛv·.
- A bˆngÈszı, vagy egy mobilapp a kapu. A h·ttÈrben ugyanaz a program fut, ami a logik·t adja.
-  Szerver (Kiszolg·lÛ): A h·ttÈrben futÛ program/logika, ide jutunk a bˆngÈszın, appon (egyszÛval: nÈzet) kereszt¸l.                               Adatt·rol·s, kalkul·ciÛ, hozz·fÈrÈs stb a feladata. A servernek van egy IP cÌme, amin kereszt¸l                            elÈrhetj¸k Ès van egy domain neve is, ezt szoktuk beÌrni a bˆngÈszı cÌmsor·ba, de ha tudjuk az IP                          cÌmet Ès azt Ìrjuk be is ugyanoda vezet. PÈlda cmd -> ping vmilyen webcÌm (adatcsomagokat k¸ld, Ìgy kiprÛb·lhatÛ, hogy tÈnyleg lÈtezik-e a webcÌm Ès az IP-t is megkapjuk.)
  
 
-3.video
-   Az adatok rÈszletekben Èrkeznek meg a szerverrıl.
-   KÈt fÈle csatorn·n tˆrtÈnhet ez meg: UDP Ès TCP
-	UDP - skype, sportkˆzvetÌtÈs, ahol az adat·raml·sban nincs ellenırzÈs, nÈha kimaradhat egy-egy rÈszlet, az a       	fontos, hogy menjen
-	TCP - lassabb a kommunik·ciÛ, mert folyamatos r·kÈrdezÈs van az adatcsomagokra, hogy rendben megÈrkeztek-e. A      	szerver ˙jrak¸ldi ami nem Èrkezett meg.
-  Domain nÈv - szerver ip cÌmÈhez van hozz·rendelve, hogy ne az IP cÌmet kelljen be¸tni a bˆngÈszıbe. Ezek fix IP cÌmek.
-  A lakoss·gi felhaszn·lÛnak folyamatosan v·ltozÛ IP cÌm¸k van ·ltal·ban, a fix jÛval dr·g·bb. De ez elÈg is az              internetezÈshez, mert a m·sik oldalon lÈvı fix IP-t elÈg tudnunk errıl az oldalrÛl. Dinamikus ip-hez is lehet domain-t     regisztr·lni csak jÛval bonyolultabb.
-  Amikor elsı alkalommal ¸t¸n be egy oldalt, hosszabb idı amÌg elÈrj¸k. M·sodszorra m·r le van t·rolva a gÈpen, hogy ahhoz a domain-hez milyen IP tartozik Ès m·r automatikusan ezzel indÌtjuk el a kÈrÈst. A kÈrÈsben vannak adatok, a routerem IP cÌme pÈld·ul, hogy hov· kell majd visszaadni az adatot. 
-	Request: a kÈrÈs, benne az IP cÌmemel
-	Response: a v·lasz, amely aprÛ adatcsomagokbÛl ·ll. Ez a routerhez Èrkezik meg, Ès a router tudja, hogy a 			h·lÛzatban melyik gÈphez kell az ¸zenetet eljuttatni.
-  Az adat kˆzel fÈnysebessÈggel halad az optikai k·belekben.
-  A request Ès response is kÈt rÈszbıl ·ll:
-	header - 
-	body - ami mag·t az adatot tartalmazza. (pl html+css+js) A bˆngÈszı ebbıl tudja ˆssze·llÌtani az oldalt. Ma m·r 		jobban terhelhetıek a bˆngÈszık mint rÈgebben voltak, mert a felhaszn·lÛk gÈpe nagyobb teljesÌtmÈny˚, Ìgy a szerver helyett sok mindent ·t lehet adni a bˆngÈszınek (rÈgen szinte mindent a szerver vÈgzett). A bˆngÈszı tudja futtatni a javascriptet.
 
-4.video
-HTTP st·tusz kÛdok:
-	headerben Èkeznek a response-ban (v·laszban)
-	1xx - informatÌv leÌr·s
-	2xx - minden rendben
-		200 - a kÈrÈs Èrtelmezve lett Ès a r·adott v·lasz is ok
-		204 - minden ok a kÈrÈssel, de nem kell visszaadni v·laszt
-	3xx - ·t lesz¸nk ir·nyÌtva valahov·
-		301 - a tartalom ˙j cÌmre kˆltˆzˆtt Ès ·tir·nyÌt·s tˆrtÈnik
-		307 - ideiglenes ·tir·nyÌt·s (nem vÈgleges az ˙j cÌm)
-	4xx - kliens oldali hiba
-		400 - hib·s lekÈrdezÈs
-		401 - nincs jogosults·g a v·lasz megtekintÈsÈre, ilyenkor ·lt. autentik·ciÛra van sz¸ksÈg.
-		403 - tiltott elÈrÈs (ak·r autentik·l ak·r nem a felhaszn·lÛ), nem engedÈlyezett sz·m·ra a v·lasz elÈrÈse
-		404 - nem tal·lhatÛ
-	5xx - szerver oldali hiba
-		500 - belsı szerver hiba, nem kapunk v·laszt	
-		503 - a szolg·ltat·s nem elÈrhetı
-F12 - bˆngÈszı fejlesztıi segÈdje
-CachelÈs - bizonyos dolgokat pl kÈpet egy oldalrÛl elment a bˆngÈszı, Ès legkˆzelebb innen tˆlti be --> gyorsabb lesz, viszont ha frissÌtik az oldalt ˙j kÈppel stb, az nem fog befriss¸lni. --> Fontos, hogy mit enged¸nk cachel-ni Ès mit nem. InkognitÛ mÛdban nem cachel a bˆngÈszı. A sz·mÌtÛgÈpen nem hagy nyomot ez a mÛdszer. De pl ha egy munkahelyen monitorozz·k a bˆngÈszÈst ott l·szÛdni fog a megl·togatott weboldal.
-A serverek a html-en kÌv¸l rengeteg mindent visszaadhatnak, pl css-t, mp3-at stb. 
-MIME type
-Ez is a response headerjÈben info, hogy mit ad vissza a szerver, ez segÌt a bˆngÈszınek, pl ha pdf-et kap vissza meg tudjuk nyitni a bˆngÈszıben pdf-kÈnt ---> ehhez tudnia kell mit kap (tÌpus)
-	text/html
-	audio/mp3
-	image/jpeg
-Vannak olyan szerverek, amelyek egy·ltal·n nem adnak vissza html-t, mert pl vannak mobilalkalmaz·sok amelyek webesek Ès html-t haszn·lnak, de vannak a native mobilalkalmaz·sok.
-Ezek az Iphone/Android grafikus elemeit haszn·lj·k Ès a szervertıl csak adatokat kÈrnek le. A v·lasz egyszer˚ xml vagy json lesz.
-webszerver - html alap˙
-soap/rest szerver - xml/json
 
-5.video
-Szerverek kˆzˆtti kommunik·ciÛ, adat·raml·s lehetısÈge (mindegy milyen nyelven vannak Ìrva): xml, json, yaml
-A szerverek a megkapott xml, json adatot egy parser segÌtsÈgÈvel tudj·k kibontani a saj·t nyelv¸knek megfelelıen Ès ·llÌtj·k ˆssze belıle az objektumot.
-Az xml Ès json minden nyelvben ugyan˙gy fog kinÈzni.
-Xml - JSON konverterrel megnÈzhetj¸k egy adott adatot amit k¸ldeni akarunk mindkÈt form·ban.
-JSON valid·torral pedig ellenırizhetj¸k, hogy helyes-e a form·tuma (szerkezete).
-xml - olvashatÛbb
-json - kevesebb karater, kÈpes k¸lˆnbsÈget tenni, hogy egy sz·mot sz·mkÈnt vagy szˆvegkÈnt k¸ldˆk
-yaml - mÈg kevesebb karakter, kapcsos z·rÛjelek nÈlk¸l
 
-6.video
-Java keretrendszerek
-	Java EE - eredeti Oracle termÈk
-		- csak alkalmaz·s szerveren futtathatÛ: pl. glassfish, jboss, wildfly
-	Spring  - nyÌlt forr·skÛd˙
-		- egyszer˚ szerveren is fut mint a Tomcat
-Servlet: java objetum, amely tud http kÈrÈst feldolgozni Ès tud is r· v·laszolni, bele van programozva.
-Tomcat: egy keretrendszer amin kÈpes futni a spring.
-	RÈszei: Catalina (itt fut a kÛd, benne a servlet)
-		Coyote (a kapu, fogadja a kÈrÈseket Ès k¸ldi az adatot, kˆzvetÌt a Catalina felÈ)
-Tomcat-et ˆnmag·ban is tˆlthet¸nk le, de a xampp-ban is benne van.
-Be·llÌt·sok->
-conf mappa, server.xml -> connector: itt lehet megadni a localhost port sz·m·t, amin kereszt¸l elÈrj¸k a bˆngÈszıt.
 
-7.video
-conf mappa, tomcat-users.xml -> itt tudjuk megadni a jogosults·gokat
-<role rolename="manager-gui"/>
-<role rolename="manager-script"/>
-<role rolename="manager-jmx"/>
-<role rolename="manager-status"/>
-<role rolename="admin-gui"/>
-<role rolename="admin-script"/>
-<user username="admin" password="admin" roles="manager-gui,manager-script,manager-jmx,manager-status,admin-gui,admin-script"/>
-Ha csak a tomcat-et telepÌtett¸nk:
-indÌt·s:  cmd -> tartalmazÛ mappa(tomcat/bin) -> startup.bat
-A m˚kˆdÈshez kˆrnyezeti v·ltozÛna be kell ·llÌtani:
-Rendszerv·ltozÛk al·:
-JAVA_HOME: C:\Program Files\Java\jdk1.8.0_144
-JRE_HOME: C:\Program Files\Java\jre1.8.0_231
-CATALINA_HOME: C:\Program Files\Java\xamppJavaTomcat\tomcat
-Saj·t v·ltozÛk:
-Path: C:\Program Files\Java\jdk1.8.0_144\bin;C:\Program Files\Java\jre1.8.0_231\bin
-Ha localhost:8080 esetleg 500-as hib·t ad, akkor a tomcat mapp·n kell megnÈzni a user jogosults·gokat
+
+
+
 
 8.video
-PÈlda servletek: http://localhost:8080/examples/servlets/
-Server oldali alkalmaz·s Ìr·sa keretrendszer nÈlk¸l
-	Van egy kˆtelezı felÈpÌtÈse: A tomcat-ben van egy webapps mappa, ami a webalkalmaz·sok mapp·ja, ebbe hozzuk lÈtre a saj·t alkalmaz·sun mapp·j·t. ElsoAlkalmazas (ez lesz a saj·t servlet¸nk). A webapps mapp·ban vannak m·r servletek, ezeket l·rjuk megjelenni a tomcat oldalakÈnt amikor elindÌtjuk a localhost:8080-at.
+P√©lda servletek: http://localhost:8080/examples/servlets/
+Server oldali alkalmaz√°s √≠r√°sa keretrendszer n√©lk√ºl
+	Van egy k√∂telez≈ë fel√©p√≠t√©se: A tomcat-ben van egy webapps mappa, ami a webalkalmaz√°sok mapp√°ja, ebbe hozzuk l√©tre a saj√°t alkalmaz√°sun mapp√°j√°t. ElsoAlkalmazas (ez lesz a saj√°t servlet√ºnk). A webapps mapp√°ban vannak m√°r servletek, ezeket l√°rjuk megjelenni a tomcat oldalak√©nt amikor elind√≠tjuk a localhost:8080-at.
 ElsoAlkalmazas
 	WEB-INF
-	- src (kÛdot t·rolja .java)
-		- package mapp·k (egyezik a f·jlban a package nevÈvel)
-			- .java f·jlok (egyezik az oszt·ly nevÈvel)
-	- lib (f¸ggısÈgek/dependency pl.:itext)	
-	- classes (lefordult kÛd .class) --> ebbıl lesz a jar fajl
+	- src (k√≥dot t√°rolja .java)
+		- package mapp√°k (egyezik a f√°jlban a package nev√©vel)
+			- .java f√°jlok (egyezik az oszt√°ly nev√©vel)
+	- lib (f√ºgg≈ës√©gek/dependency pl.:itext)	
+	- classes (lefordult k√≥d .class) --> ebb≈ël lesz a jar fajl
 	- web.xml
 	META-INF
-Ami a web- Ès meta-inf mapp·kban van az nem elÈrhetı a felhaszn·lÛk sz·m·ra, ami kÌv¸l az ElsoAlkalmaz·sban az igen (html, css, jsp, kÈp). Az src Ès classes mappa egym·s t¸kˆrkÈpei kell legyenek. A compiler fordÌtja le a .java-t .class-ra.
+Ami a web- √©s meta-inf mapp√°kban van az nem el√©rhet≈ë a felhaszn√°l√≥k sz√°m√°ra, ami k√≠v√ºl az ElsoAlkalmaz√°sban az igen (html, css, jsp, k√©p). Az src √©s classes mappa egym√°s t√ºk√∂rk√©pei kell legyenek. A compiler ford√≠tja le a .java-t .class-ra.
 
 9.video
 .java -> .class
-cmd --> web-inf mappa --> javac -d (destination, hov·) classes src\test\HelloServlet.java (forr·s)
-Amiket haszn·lok importkÈnt a f·jlban, az kell lÈtezzen az alkalmaz·somban. A tomcat ezeket tartalmazza, csak ·t kell h˙znom ami kell. A C:\Program Files\Java\jdk1.8.0_144/jre/lib/ext mapp·ba kell beletenni. Ez (jre) a futtat·si kˆrnyezet. Ha ez rendelkezik ezzel akkor az alkalmaz·sunk l·tni fogja.
-Ha nem tessz¸k ·t akkor cmd-ben meg kell adni ennek a jar f·jlnak az ˙tvonal·t:
+cmd --> web-inf mappa --> javac -d (destination, hov√°) classes src\test\HelloServlet.java (forr√°s)
+Amiket haszn√°lok importk√©nt a f√°jlban, az kell l√©tezzen az alkalmaz√°somban. A tomcat ezeket tartalmazza, csak √°t kell h√∫znom ami kell. A C:\Program Files\Java\jdk1.8.0_144/jre/lib/ext mapp√°ba kell beletenni. Ez (jre) a futtat√°si k√∂rnyezet. Ha ez rendelkezik ezzel akkor az alkalmaz√°sunk l√°tni fogja.
+Ha nem tessz√ºk √°t akkor cmd-ben meg kell adni ennek a jar f√°jlnak az √∫tvonal√°t:
 	javac -d classes -cp ..\..\..\lib\servlet-api.jar src\test\HelloServlet.java 
 
 10.video
 web.xml: deployment descriptor (DD)
-	 ˙tvonalak --> mit Ìr be a felhaszn·lÛ Ès milyen servletet Èr el ezzel
-	 servletek elnevezÈse, gy˚jtemÈnye
+	 √∫tvonalak --> mit √≠r be a felhaszn√°l√≥ √©s milyen servletet √©r el ezzel
+	 servletek elnevez√©se, gy≈±jtem√©nye
 
 11.video
-Get: paramÈtereket url-ben adjuk ·t, l·thatÛ, elmenthetı kˆnyvjelzıkÈnt, limit·lt mennyi paramÈter lehet.
-Post: nincs limit ak·r f·jlokat is k¸ldhet¸nk, kˆnyvjelzıkÈnt nem menthetı, valamivel biztons·gosabb.
-action: mit hÌvjon meg, mi fogja feldolgozni az adatokat a form elk¸ldÈse ut·n.
-ElsoAlkalmazas/form.html --> form lÈtrehoz·sa, ezt kˆzvetlen¸l elÈri a felhaszn·lÛ, mivel kÌv¸lre mentett¸k el.
-Ha elk¸lj¸k a formot, a benne tal·lhatÛ ÈrtÈkek a request.getParameter() - el tudjuk kiszedni (olyan mint php-ben a $_GET[]).
+
+action: mit h√≠vjon meg, mi fogja feldolgozni az adatokat a form elk√ºld√©se ut√°n.
+ElsoAlkalmazas/form.html --> form l√©trehoz√°sa, ezt k√∂zvetlen√ºl el√©ri a felhaszn√°l√≥, mivel k√≠v√ºlre mentett√ºk el.
+Ha elk√ºlj√ºk a formot, a benne tal√°lhat√≥ √©rt√©kek a request.getParameter() - el tudjuk kiszedni (olyan mint php-ben a $_GET[]).
 
 12.video
-web.xml-ben be kell ·llÌtani az echo servlethez az ˙tvonalat.
-lefordÌtjuk a servletet
-HTTP method: 
-	GET
-	POST
-	PUT
-	DELETE
-	CONNECT stb.
+web.xml-ben be kell √°ll√≠tani az echo servlethez az √∫tvonalat.
+leford√≠tjuk a servletet
+
 
 13.video
-Az xml alap˙ konfigur·ciÛt (web.xml-ben regisztr·ljuk a servleteket Ès az ˙tvonalat) kiv·lthatjuk annot·ciÛ alap˙ konfigur·ciÛval is.Pl.: @WebServlet(name = "feldolgozas", urlPatterns = {"/feldolgozas/*"})
-A servlet egyszer van lÈtrehozva Ès minden felhaszn·lÛ ugyanazt a pÈld·nyt fogja visszakapni.
-Singleton - egy pÈld·ny Èl belıle a JVM-ben Ès mindenki ugyanarra az egy objektumra hivatkozik, az oszt·lyv·ltozÛk ÈrtÈke ugyanat lesz, nem kell k¸lˆn static-re ·llÌtani. A servlet is Ìgy viselkedik, de nem minden esetben, ezÈrt nem mondjuk r·, hogy singleton. Vannak speci·lis esetei.
-Servletben a doGet doPost-on kÌv¸l szoktuk haszn·lni Ès ezek is Override a getServletInfo (b·rmilyen infot beÌrhatunk amit ki akarunk Ìratni pl, ez f¸ggvÈny van visszatÈrÈsi ÈrtÈke), init (metÛdus, ez akkor fut le amikor a tomcat lÈtrehozza az adott servletet, minden m·s elıtt teh·t - ezÈrt itt csin·lhatjuk pl az adatb·zis kapcsolatot, kiolvashatunk konfigur·ciÛs f·jlbÛl adatokat stb.), destroy (amikor a servlet elpusztul akkor fut le - kapcsolatok lez·r·sa, pl. adatb·zisÈ. Fontos, hogy minden olyan kapcsolatot lez·rjunk amire van lehetısÈg. Az adatb·zis kapcsolatnak timeout-ot is lehet be·llÌtani, amikor automatikusan bontja a kapcsolatot. )
+Az xml alap√∫ konfigur√°ci√≥t (web.xml-ben regisztr√°ljuk a servleteket √©s az √∫tvonalat) kiv√°lthatjuk annot√°ci√≥ alap√∫ konfigur√°ci√≥val is.Pl.: @WebServlet(name = "feldolgozas", urlPatterns = {"/feldolgozas/*"})
+A servlet egyszer van l√©trehozva √©s minden felhaszn√°l√≥ ugyanazt a p√©ld√°nyt fogja visszakapni.
+Singleton - egy p√©ld√°ny √©l bel≈ële a JVM-ben √©s mindenki ugyanarra az egy objektumra hivatkozik, az oszt√°lyv√°ltoz√≥k √©rt√©ke ugyanat lesz, nem kell k√ºl√∂n static-re √°ll√≠tani. A servlet is √≠gy viselkedik, de nem minden esetben, ez√©rt nem mondjuk r√°, hogy singleton. Vannak speci√°lis esetei.
+Servletben a doGet doPost-on k√≠v√ºl szoktuk haszn√°lni √©s ezek is Override a getServletInfo (b√°rmilyen infot be√≠rhatunk amit ki akarunk √≠ratni pl, ez f√ºggv√©ny van visszat√©r√©si √©rt√©ke), init (met√≥dus, ez akkor fut le amikor a tomcat l√©trehozza az adott servletet, minden m√°s el≈ëtt teh√°t - ez√©rt itt csin√°lhatjuk pl az adatb√°zis kapcsolatot, kiolvashatunk konfigur√°ci√≥s f√°jlb√≥l adatokat stb.), destroy (amikor a servlet elpusztul akkor fut le - kapcsolatok lez√°r√°sa, pl. adatb√°zis√©. Fontos, hogy minden olyan kapcsolatot lez√°rjunk amire van lehet≈ës√©g. Az adatb√°zis kapcsolatnak timeout-ot is lehet be√°ll√≠tani, amikor automatikusan bontja a kapcsolatot. )
 
 14.video
-JSP - java server pages -> automatikusan gener·l egy servletet, a html-t fogslmszhstjuk meg benne Ès Ìrhatunk bele java kÛdot is.
-Az alkalmaz·son bel¸l, de a WEB-INF mapp·n kÌv¸l hozzuk lÈtre mint a sima html-t.
-Konfigur·ciÛs f·jl beolvas·sa: Ebben szokt·k megadni pÈld·ul az adatb·zis kapcsolÛd·shoz sz¸ksÈges adatokat stb. Õgy ha valami v·ltozik csak itt kell mÛdosÌtani. WEB-INF-en bel¸l hozzuk lÈtre, a web.xml mellÈ.
-
-15.video
-Postman: Szimul·lni tudjuk egy szervernek k¸ldˆtt kÈrÈst, Ès l·tjuk a r· Èrkezett v·laszt.
-	 Authorization f¸l alatt tudjuk kiv·lasztani milyen tÌpus˙ autentik·ciÛt akarunk tesztelni
-Authentik·ciÛ: a felhaszn·lÛ igazolja, hogy rendelkezik az elÈrÈshez sz¸ksÈges jogokkal, ezt megteheti pl egy username+password p·rossal. Ha ez nem sikeres egy http kÛddal jelezhetj¸k, hogy megtagadjuk a v·lasz ad·s·t (pl. 401).
-Basic (access) authentication: A request headerjÈben tudjuk vizsg·lni az autentik·ciÛt. Ha van, Ès k¸ldˆtt a felhaszn·lÛ username + password p·rost itt t·rolÛdik, innen tudjuk kiolvasni. De a header a username+password p·rost kÛdolva tartalmazza. (Base64 elj·r·ssal --> bin·ris adatot csin·l). A szerver ezt vissza tudja fejteni. UgyanabbÛl a szÛbÛl mindig ugyanaz a kÛd lesz, feltˆrhetı, de valamivel biztons·gosabb, mint szimpl·n k¸ldeni. Viszont ez nem elÈg ezÈrt fontos hogy a kapcsolat https (-ssl/tls) kapcsolat legyen. Ez biztons·gos kapcsolat. SSL vagy TLS segÌtsÈgÈvel titkosÌtva van az adat.
+JSP - java server pages -> automatikusan gener√°l egy servletet, a html-t fogslmszhstjuk meg benne √©s √≠rhatunk bele java k√≥dot is.
+Az alkalmaz√°son bel√ºl, de a WEB-INF mapp√°n k√≠v√ºl hozzuk l√©tre mint a sima html-t.
+Konfigur√°ci√≥s f√°jl beolvas√°sa: Ebben szokt√°k megadni p√©ld√°ul az adatb√°zis kapcsol√≥d√°shoz sz√ºks√©ges adatokat stb. √çgy ha valami v√°ltozik csak itt kell m√≥dos√≠tani. WEB-INF-en bel√ºl hozzuk l√©tre, a web.xml mell√©.
