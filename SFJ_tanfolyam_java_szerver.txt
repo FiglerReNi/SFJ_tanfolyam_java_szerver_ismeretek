@@ -14,29 +14,6 @@
 
 
 
-10.video
-web.xml: deployment descriptor (DD)
-	 útvonalak --> mit ír be a felhasználó és milyen servletet ér el ezzel
-	 servletek elnevezése, gyűjteménye
-
-11.video
-
-action: mit hívjon meg, mi fogja feldolgozni az adatokat a form elküldése után.
-ElsoAlkalmazas/form.html --> form létrehozása, ezt közvetlenül eléri a felhasználó, mivel kívülre mentettük el.
-Ha elküljük a formot, a benne található értékek a request.getParameter() - el tudjuk kiszedni (olyan mint php-ben a $_GET[]).
-
-12.video
-web.xml-ben be kell állítani az echo servlethez az útvonalat.
-lefordítjuk a servletet
-
-
-13.video
 
 
 
-Servletben a doGet doPost-on kívül szoktuk használni és ezek is Override a getServletInfo (bármilyen infot beírhatunk amit ki akarunk íratni pl, ez függvény van visszatérési értéke), init (metódus, ez akkor fut le amikor a tomcat létrehozza az adott servletet, minden más előtt tehát - ezért itt csinálhatjuk pl az adatbázis kapcsolatot, kiolvashatunk konfigurációs fájlból adatokat stb.), destroy (amikor a servlet elpusztul akkor fut le - kapcsolatok lezárása, pl. adatbázisé. Fontos, hogy minden olyan kapcsolatot lezárjunk amire van lehetőség. Az adatbázis kapcsolatnak timeout-ot is lehet beállítani, amikor automatikusan bontja a kapcsolatot. )
-
-14.video
-JSP - java server pages -> automatikusan generál egy servletet, a html-t fogslmszhstjuk meg benne és írhatunk bele java kódot is.
-Az alkalmazáson belül, de a WEB-INF mappán kívül hozzuk létre mint a sima html-t.
-Konfigurációs fájl beolvasása: Ebben szokták megadni például az adatbázis kapcsolódáshoz szükséges adatokat stb. Így ha valami változik csak itt kell módosítani. WEB-INF-en belül hozzuk létre, a web.xml mellé.
