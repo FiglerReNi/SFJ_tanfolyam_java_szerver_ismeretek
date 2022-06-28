@@ -297,6 +297,365 @@ Linux konfigurálás:
     			password: a droplet jelszava
     			https://www.digitalocean.com/docs/droplets/resources/console/
 
+  Linux parancsok:
+    A parancsok gyakorlatilag apró programok, amiknek sok esetben adhatunk paramétereket is.
+    https://explainshell.com/
+
+  Yum:
+    	• A linux program alkalmazás letöltője.
+    	• Mivel konzolon keresztül csatlakozunk a távoli szerverünkhöz, ezért itt nincs böngésző, ahonnan le tudnánk a különböző alkalmazásokat szedni, ezért van szükség erre a programra. Gyorsabb is mintha böngészőn keresztül telepítenénk.
+    	• Ezzel tudjuk például a JVM-et is letölteni.
+    	• Használat előtt mindig frissíteni kell ezt a programot a yum upgrade paranccsal
+    Csomag telepítése:
+    	parancs: yum install <csomga neve> <esetleg verziószám, ha nem a legfrisebbet akarjuk> -y
+    	működés: a központi repositoryjában rákeres a csomag névre és letölti, ha megtalálta.
+    Csomagra keresés
+    	felhasználás: ha nagyon sok változat/verzió van valamihez, így tudjuk kilistázni
+    	parancs: yum serach <csomag neve>
+    JDK telepítése:
+    	Kétféle telepíthető: A különbség a licence-ben van, illetve vannak olyan modulok, amelyek nem találhatóak meg az openben, de az oracle-ben igen. Mindkettő egyébként az oracle-hoz tartozik.
+    		○ open JDK
+    		○ oracle JDK
+    	Rákeresünk a java kulcsszóra és a listából minen olyat szeretnénk letölteni, ami java 1.8.0 openjdk-val kezdődik
+    	parancs: yum install java-1.8.0-openjdk* -y
+    Git telepítése:
+    	parancs: yum install git -y
+
+  Vi:
+    	• Linuxon a vi segítségével lehet szerkeszteni a fájlokat
+    	• vi <file neve> (ez létre is hozza a fájlt, ha még nem létezik)
+    	• i betű lenyomásával kerülünk insert módba
+    	• esc lenyomásával mentek
+    	• shift z z  kombinációval lehet kilépni a szerkesztőből
+    	• #!<útvona> első sorban így adom meg melyik program kell a lefuttatáshoz, ha pl bash-t akarunk használni
+    	• # komment jele, ami ez után van nem fut le
+    	• ha mégsem akarom elmenteni amit csináltam az insertből kilépek az esc-el, majd alulra :q! és enter a shift z z helyett
+    	• A vi-ben a sorok legyenek számozottak:
+    	https://www.cyberciti.biz/faq/vi-show-line-numbers/
+    		○ cd -> home könyvtár
+    		○ ls -la -> rejtett fájlokat is lássuk
+    		○ létrehozunk egy újat vi .vimrc néven
+    		○ set number -> ennyit írunk bele
+    	adott file-ban:
+    		:set number -> alulra
+
+  Grep:
+    Kereső:
+    	• Tudom a tartalmat, de nem tudom merre keressem
+    	• grep -rin "8080" tomcat/ - meg kell mondani melyik mappában. Ha rekurziv módon keresünk akkor az almappákban is keres (-r)
+
+  Cron:
+    	• Idő alapon ütemezett feladatok.
+    	• sh script futtatása például:
+    		○ kelleni fog a futtatandó fájl abszolút elérési útvonala
+    			§ pwd -> útvonal
+    			§ + fájl neve
+    		○ mikor fusson
+    			§ crontab.guru
+    			§ pl.: minden nap hajnali kettő: 0 2 * * *
+    crontab:
+    0 2 * * * sh /root/java/SFJ_tanfolyam_spring_boot_ismeretek/SpringProject/build.sh
+
+  .JAR, MAVEN:
+    Projekt a szerveren:
+      	1. Létrehozunk egy könyvtárat a root mappában.
+      		> mkdir java
+      	2. Belépünk a java mappába
+      		> cd java
+      	3. Githubról feltöltjük a projektünket
+      		> git clone <github link>
+      	4. Futtatható jar file létrehozása
+      		> mvn clean install
+      		> létrehozza a target foldert, ebben lesz benne a .jar file
+      	5. Program elindítása
+      		> cd target
+      		> java -jar <alkalmazas_neve.jar>
+      		> ellenőrizzük hányas porton indult
+      	6. Kipróbálás
+      		> szerver ip:port amin elindult az alkalmazásunk
+      Alkalmazás folyamatos futtatása:
+      	• DigitalOcean konzolján keresztül elindítva
+      	• Alkalmazás háttérben futtatása
+      		> nohup java -jar <alkalmazas_neve.jar> &
+      			§ az alkalmazás visszajelzései ne a konzolon jelenjenek meg, hanem legyenek elirányítva. Így ha kilépünk a konzolból, vagy a programból, akkor is fut tovább a háttérben
+      Háttérben futó folyamatok leállítása:
+      	• kilistázzuk a háttérben futó folyamatokat
+      		> ps
+      	• id vagy név alapján
+      		> pkill java
+      Automatizálás:
+      	Lépései:
+      		> Meghatározott időözönként történjen meg a gitben lévő legfrisebb változat lehúzása
+      		> A jelenleg futó alkalmazás álljon le
+      		> Maven segítségével történjen meg az újra csomagolás
+      		> Futtassa az új kódot
+      	Megvalósítás:
+      		Shell Script írása a bash segítségével, ez egy programozási nyelv, ami közvetlenül az operációs rendszerrel kommunikál, procedurális nyelv
+      			§ létrehozunk egy .sh kiterjesztésű fájl-t a projekten belül ahol a target mappa is van
+      			§ a fájlt azzal kell kezdeni, hogy megmondjuk milyen nyelven íródik, milyen interpreter kell hozzá, vagyis a bin folder melyik programját használja. Nekünk a bash fog kelleni
+      	Szerkezet:
+      		#!<útvona> - így kell kezdődnie, és ez mindig az első sorban kell legyen, itt adjuk meg melyik programhoz irányítjuk
+      		echo - konzolra ír üzeneteket
+      		mv target/springproject-0.1.jar ../ - file egy könyvtárral feljebb helyezése mint amiben a .sh van
+      		mv target/springproject-0.1.jar ./ - file abba a mappába kerül mint a .sh
+      		#!/bin/bash
+      		echo Leszedem a legfrisebb kódot
+      		git pull
+      		#Ezzel a file-al automatizáljuk a folyamatot
+      		echo Kezdem a buildelést
+      		mvn clean install
+      		mv target/springproject-0.1.jar ../
+      		echo Készen van a buildelés
+      		echo Leállítom a jelenleg futó java alkalmazást
+      		pkill java
+      		echo indítom a legfrisebb verziót
+      		nohup java -jar springproject-0.1.jar &
+    Port váltás:
+      	Portok:
+      		A tomcat alap esetben a 8080-on indul el
+      	.jar
+      		Megadhatjuk az src/main/resources/application.properties-en, hogy milyen porton fusson az alkalmazásunk
+      		server.port = 80
+      		hátránya: minden módosításkor be kell jönni a projektbe, módosítani kell és újra kell buildelni mindig
+      		megoldás: az application.properties-t projekten kívülre tudjuk másolni, így itt is lesz egy példány, és ebben tudom elvégezni a módosításokat, a .jar file mellé kerüljön. Ha valami miatt ez a külső más fájlban van, akkor az alkalmazás indításakor át kell adni paraméterben, hogy honnan húzza be:
+      		java -jar springproject-0.1.jar -Dspring.config.location=<utvonal>/application.properties
+      		Ez lesz az elsődleges property, ez után nézi azt ami a projektben van. A projektben lévő fájlokat csak és kizárólag giten keresztül lehet módosítani, csak így nem nyúlunk bele.
+      		kód: cp src/main/resources/application.properties ./(éppen aktuális mappát jelenti)
+      	.war
+      		A tomcat portját át lehet állítani, de a linuxon az 1024 alatti portok védve vannak, ezért kerülő megoldást lehet használni:
+      			§ A 80-as portra érkező kéréseket átírányítjuk a 8080-ra
+      				iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j DNAT --to-destination :8080
+      			§ /etc/systemd/system/tomcat.service fájlban módosítunk:
+      				□ ebben megadjuk az application.properties helyét, amiben benne van a port módosítása:
+      					-Dspring.config.location=<utvonal>/application.properties
+      				□ lehet egy szerveren több alkalmazás is, ilyenkor webapps mappán belül különböző .war file-ként élnek, ebben az esetben minden alkalmazás megkapja a beállított application.properties-t, ezért ez ilyen esetben nem jó megoldás
+      			§ /tomcat/conf/catalina.properties
+      				□ ez is csak akkor jó megoldás, ha csak egy alkalmazásunk van a szerveren
+      				□ a file-ban a common.loaderhez abszolút útvonallal megadva felfűzzük a saját application.properties file-unkat
+      					common.loader="${catalina.base}/lib","${catalina.base}/lib/*.jar","${catalina.home}/lib","${catalina.home}/lib/*.jar", "/opt/tomcat/conf/sajatConf/*"
+      			§ Legjobb megoldás, ha több alkalmazás van akkor is jó
+      				□ tomcat/conf -on belül új mappa appConf és ebbe tárolom az application.properties file-t
+      				□ A tomcat-et el kell irányítani ehhez a file-hoz, és meg kell adni azt is melyik alkalmazásnál használja
+      				□ tomcat/conf/Catalina/localhost mappában az alkalmazás nevével (.war neve) létre kell hozni egy file-t
+      					® ROOT.xml
+      					Tartalma:
+      						<?xml version="1.0" encoding="UTF-8"?>
+      						<Context>
+      						      <Environment name="spring.config.location" value="file:/opt/tomcat/conf/appConf/" type="java.lang.string"/>
+      						</Context>
+      				□ mivel az xml neve megegyezik a .war nevével, ezért csak erre fog vonatozni ez a beállítás, hogy ezt az applocation.properties-t használja
+
+  .WAR, TOMCAT:
+    Tomcat telepítése:
+      https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-8-on-centos-7
+      https://tecadmin.net/install-tomcat-8-on-centos-8/
+      Részletes út:
+      	• A tomcat egy kapu a szerverünk és a külvilág között, ezért biztosnági kockázatot is jelent.
+      	• wget telepítése a yum segítségével
+      	• A Tomcat oldalán megkeressük a telepítőjét:
+      	https://tomcat.apache.org/download-80.cgi
+      		○ .zip -> windows-ra optimalizált
+      		○ tar.gz -> linuxra ennek az útvonala kell a böngészőből (binary distributions féle)(copy link location)
+      		https://downloads.apache.org/tomcat/tomcat-8/v8.5.63/bin/apache-tomcat-8.5.63.tar.gz
+      	• Parancs:
+      		○ wget <link> --> ezzel töltjük le a tar.gz-t
+      	• Kicsomagolás:
+      		○ tar xzf apache-tomcat-8.5.63.tar.gz
+      	• Kitöröljük a tar.gz-t
+      	• A tomcat-et nem futtatjuk root jogosultsággal, mert a root-nak admin joga van, így ha valami biztonsági rés van az alkalmazásunkban vagy a tomcaten, akkor könnyen visszaélhetnek vele, pl lefuttathatnak távolról valmit stb. Ezért létrehozunk egy felhasználót a tomcat futtatásához.
+      		○ groupadd tomcat -> új csoport létrehozása
+      		○ useradd -g tomcat -M -d /opt/tomcat -s /bin/nologin tomcat -> új felhasználó létrehozása a tomcat csoportba és a helye az a root-al azonos szintű opt mappában a tomcat almappában legyen. Tehát ha ő belép, úgy ahogy a root a rootba kerül, ő ebbe az opt/tomcat-be alapból, ide fogjuk tenni a tomcat programot is. Végül letiltjuk, hogy ezzel a felhasználóval ne lehessen egyébként bejelentkezni
+      	• Áthelyezzük a kicsomagolt tomcat file-okat az opt/tomcat-be
+      		○  mv apache-tomcat-8.5.63/ /opt/tomcat
+      	• Beállítjuk a mappa tulajdonosnak az új tomcat csoportot, a felhasználói szintű tulajdnos marad a root
+      		○ chgrp -R tomcat /opt/tomcat
+      	• A tomcat/conf mappához állítunk csoportszintű olvasási jogot és végrehajtási jogot
+      		○ chmod -R g+r /opt/tomcat/conf
+      		○ chmod -R g+x /opt/tomcat/conf
+      	• A tomcat felhasználónak tulajdonosi jogot adunk az opt/tomcat/webapps, work, temp/log mappa felett
+      		○ chown -R tomcat /opt/tomcat/webapps/
+      	• A tomcatet futtatható szervizként regisztráljuk azért hogy el tudjuk egyszerűen indítani és ne kelljen a bin folderébe bemenni minden egyes alkalommal
+      		○ Új file létrehozása:
+      			§ /etc/systemd/system/tomcat.service
+      		○ Tartalma:
+      			[Unit]
+      Description=Tomcat 8.5
+      After=network.target
+      			[Service]
+      Type=forking
+      			User=tomcat
+      Group=tomcat
+      			Environment="JAVA_HOME=/usr/lib/jvm/jre"
+      Environment="JAVA_OPTS=-Djava.security.egd=file:///dev/urandom"
+      Environment="CATALINA_BASE=/opt/tomcat"
+      Environment="CATALINA_HOME=/opt/tomcat"
+      Environment="CATALINA_PID=/opt/tomcat/temp/tomcat.pid"
+      Environment="CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC"
+      			ExecStart=/opt/tomcat/bin/startup.sh
+      ExecStop=/opt/tomcat/bin/shutdown.sh
+      			[Install]
+      WantedBy=multi-user.target
+      		○ Security beállítások módosítása
+      			https://linux.die.net/man/1/chcon
+      			https://www.redhat.com/en/topics/linux/what-is-selinux
+      			○ chcon -R -t bin_t /opt/tomcat/bin/
+      		○ A módosítás felismeréséhez frissíteni kell
+      			○ systemctl daemon-reload
+      	• Tomcat indítása:
+      		○ systemctl start <service>
+      	• Apach kezdő oldala elindul: http://159.65.201.58:8080/
+      	• Automatikusan induljon
+      Rövidebb út:
+      	○ Spring boot project esetén működik az is, ha a pom.xml-be felvesszük a dependenciák közé a tomcat-et
+    Tomcat beállítása:
+      conf/tomcat-users.xml módosítása
+		    ○ különböző felhasználókat álíthatunk be különböző szerepörökkel, és ez szabályozza, hogy a tomcat felületen mit használhatunk. Ez egy webalkalmazás, amit a tomcat hozott létre, hogy egyszerűbben lehessen dolgokat beállítani
+		    http://159.65.201.58:8080/
+		  opt/tomcat/webapps
+		    ○ ebben van a tomcat felülethez tartozó mappák
+		    ○ ha mindent kitörlünk ebből a ROOT kivételével és a saját .war file-unkat pedig átnevezzük ROOT.war-ra, akor ha beírjuk az eredeti útvonalat:
+		    http://159.65.201.58:8080/, már nem a manager felület jelenik meg, hanem az alkalmazásunk
+    .war létrehozása:
+      	1. Módosítani kell a pom.xml-en, a packaging-et:
+      		        <groupId>com.springproject</groupId>
+      		        <artifactId>springproject</artifactId>
+      		        <version>0.1</version>
+      		        <name>SpringProject</name>
+      		        <description>Demo project for Spring Boot</description>
+      		        <packaging>war</packaging>
+      	2. Hozzá kell adni egy új dependency-t:
+      			    <dependency>
+      			        <groupId>org.springframework.boot</groupId>
+      			        <artifactId>spring-boot-starter-tomcat</artifactId>
+      			        <scope>provided</scope>
+      			    </dependency>
+      	3. Projekten belül src/main/java/com/projektünk (Itt azért kell módosítanunk, hogy fekészítsük a programot, hogy a tomcat fogja adni az application .properties file-t)
+      		Abban a file-ban módosítunk amiben a main függvény (vagyis az indítópontunk van), ki kell terjesztenünk egy osztályt
+      			package com.springelso;
+      			import org.springframework.boot.SpringApplication;
+      			import org.springframework.boot.autoconfigure.SpringBootApplication;
+      			import org.springframework.boot.builder.SpringApplicationBuilder;
+      			import org.springframework.boot.context.properties.EnableConfigurationProperties;
+      			import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+      			import org.springframework.context.annotation.PropertySource;
+      			import org.springframework.context.annotation.PropertySources;
+      			@EnableConfigurationProperties
+      			@PropertySources({
+      			    @PropertySource(value = "file:${appConf}", ignoreResourceNotFound = true)
+      			})
+      			@SpringBootApplication
+      			public class SpringElsoApplication extends SpringBootServletInitializer{
+      				@Override
+      				protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+      				return application.sources(SpringElsoApplication.class);
+      				}
+      				public static void main(String[] args) {
+      					SpringApplication.run(SpringElsoApplication.class, args);
+      				}
+      			}
+      	4. mvn clean install parancs
+      		-> .war file létrejön a target mappában
+      	5. áthelyezzük a tomcat webapps mappájába, és átnevezzük ROOT.war névre
+      		mv springelso-0.1.war /opt/tomcat/webapps/
+      		mv springelso-0.1.war ROOT.war (adott mappában állva)
+    Ezeket a módosításokat mindig git-ben verziókezelve csináljuk és nem szerkesztünk bele szerveren a projektbe
+
+  Adatbázis telepítés:
+     PostgreSQL
+     https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-centos-8
+     https://askubuntu.com/questions/915191/sudo-i-problem-sudo-bin-bash-asd-command-not-found (ha nem működne a sudo -i –u postgres parancs)
+     	1.  Tehetjük az alkalmazással egy szerverre, és letilthatjuk, hogy kívülről ne lehessen elérni, így csak az alkalmazás tud kommunikálni vele.
+     	2. Telepítés:
+     		yum install postgresql-server postgresql-contrib
+     	3. postgresql-setup –initdb
+     		Egy adatbázis csoportot hoz létre. Ami a postgreSQL által lesz menedzselve. Egy vázat kapunk így.
+     	4. Konfugurálás:
+     		Szerver engedély beállítása, hogy egy létrehozott user + pass-al lehessen használni az adatbázist.
+     		vi /var/lib/pgsql/data/pg_hba.conf
+     		Itt tudjuk definiálni, hogy kik és milyen módon érhetik el az adatbázist. A fájl legalján van egy táblázat, ami ezt szabályozza.
+     		A method oszlopban tudjuk felhasználó szinten szabályozni az elérést, de azt is meg lehet oldani, hogy felhasználó-jelszóval bárki beléphessen.
+     		Ehhez az application.properties-be kell beírni a user és password adatokat és az adatbázis elérést és a fenti fájlban át kell írnunk a felső host-ok METHOD értékét ident-ről md5-re. Az md5 egy kódolási forma, ezzel állítjuk be, hogy jelszóval fogjuk azonosítani a felhasználót.
+     	5. Elindítjuk apostgreSQL-t
+     		systemctl start postgresql
+     	6. Beállítjuk, hogy magától elinduljon
+     		systemctl enable postgresql
+     	7. Felhasználó kezelés:
+     		Amikor feltelepítjük a postgresql-t létrehoz magának egy alapértelmezett felhasználót, neve a postgres
+     		Az adatbázis keretrendszerben ennek a felhasználónak van admin joga, ezért át kell váltani a root-ról erre.
+     			sudo -i –u postgres
+     	8. Adatbázis belépés
+     		Az adatbázisba belépés a psql parancsal történik, ha nem írjuk utána, hogy melyik adatbázisba szeretnénk belépni, a felhasználó nevünkkkel megegyező adatbázisba fog belépni (az alap felhasználó a postgres és hozzá alapból létrejön a postgres nevű adatbázis is amiben nem lesznek még adattáblák) De megadhatjuk hogy melyik adatbázisba lépjen be.
+     	9. Adattáblák lekérdezése
+     		\dt
+     	10. Kilépés az adatbázisból
+     		\q
+     	11. Kilépés a postgres felhasználóból
+     		logout – visszarak a root-ba
+     	12. Új felhasználó létrehozása: (role)
+     		createuser --interactive
+     		Role nevének megadása: freni
+     		Superuser legyen-e vagy sem (beállítjuk hogy igen)
+     	13. Létre kell hozni egy adatbázist a user nevéhez
+     		createdb freni
+     	14. Felhasználó kezelés
+     		A postgres felhasználóval és a psql parancsal be tudunk lépni az újonnan létrehozott adatbázisunkba, de egyszerűsíthetjük ezt, ha linuxon is létrehozunk egy új felhasználót.
+     		adduser freni
+     	15. Felhasználóhoz jelszó beállítása:
+     		ALTER USER freni WITH PASSWORD '12345';
+
+  PostgreSQL alapok:
+    	• Támogatja a schema-kat, ilyen még az oracle is.
+    		A schema logikai csoportosítást tesz lehetővé az adatbázison belül a táblák között. A logikailag összetartozó táblákat berendezhetjük egy schema alá
+    	• A public az alap scema, ebben hozza létre az új táblákat alapból
+    	• Alapértelmezett portja: 5432
+    	• spring.datasource.url = jdbc:postgresql://159.65.201.58:5432/database
+    	• Konzolon az sql - ek írhatóak több sorban
+
+  Adatbázis használat:
+    Tábla létrehozása:
+    	CREATE TABLE firstTable;
+    	(age int);
+    Tábla törlése:
+    	DROP TABLE firstTable;
+    Összetetteb tábla:
+    		CREATE TABLE playground (
+    		equip_id serial PRIMARY KEY,
+    		type varchar (50) NOT NULL,
+    		color varchar (25) NOT NULL,
+    		location varchar(25) check (location in ('north', 'south', 'west', 'east', 'northeast', 'southeast', 'southwest', 'northwest')),
+    		install_date date
+    		);
+    	• Serial típust kell választani az id-nak, ha azt szeretnénk, hogy növekedjen automatikusan (mysql autoincrement), és a postgresql ennek a típusnak külön is létrehoz egy ún. sequence-t amiben nyomon követhetjük, hogyan növekszik az id.
+    	• Check azt csinálja mint a mysql enum, csak a felsorolt értékek kerülhetnek a mezőbe.
+    Adatbázis külső elérése:
+    	• Engedélyezni kell a szerveren, hogy távolról el lehessen érni az adatbázist
+    		○ Belépünk a /var/lib/pgsql/data mappába
+    		○ Szerkesztjük a postgresql.conf file-t
+    			§ listen_address sornál a localhost-ot '*'- ra cseréljük és így bárki elérheti ezt az adatbázist
+    			§ megadhatnánk itt ip címeket is konkrétan
+    		○ systemclt-el újraindítju a postgreqsl-t
+    	• Hozzáférést is kell adni:
+    		○ Belépünk a /var/lib/pgsql/data mappába
+    		○ Szerkesztjük a pg_hba.conf file-t
+    			§ ha valaki IPV4-en szeretne kapcsolódni, azt ne korlátozzuk le semmilyen ip-re
+    				□ a 127.0.0.0/32 (localhost) cseréje 0.0.0.0/0-ra
+    	• A spring boot projektben meg kell adni
+    		spring.datasource.url = jdbc:postgresql://159.65.201.58:5432/freni
+    		spring.datasource.username=freni
+    		spring.datasource.password=12345
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
