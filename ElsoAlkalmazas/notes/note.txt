@@ -1,3 +1,25 @@
+https://www.digitalocean.com/community/tutorials/how-to-install-apache-tomcat-8-on-centos-7
+https://tecadmin.net/install-tomcat-8-on-centos-8/
+https://tomcat.apache.org/download-80.cgi
+https://downloads.apache.org/tomcat/tomcat-8/v8.5.63/bin/apache-tomcat-8.5.63.tar.gz
+https://linux.die.net/man/1/chcon
+https://www.redhat.com/en/topics/linux/what-is-selinux
+https://www.cyberciti.biz/faq/vi-show-line-numbers/
+https://explainshell.com/
+Cygwin
+	https://www.cygwin.com/
+PuTTY
+	https://www.digitalocean.com/docs/droplets/how-to/connect-with-ssh/putty/
+	https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html
+DigitalOcean
+  https://www.digitalocean.com/
+Heroku
+  https://dashboard.heroku.com/apps
+  https://dashboard.heroku.com/apps/herokualkalmazasmysql/settings
+  https://www.youtube.com/watch?v=aEm0BN493sU
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-centos-8
+https://askubuntu.com/questions/915191/sudo-i-problem-sudo-bin-bash-asd-command-not-found
+
 JSP
 	• java server pages -> a html-t fogalmazhatjuk meg benne és írhatunk bele java kódot is.
 	• A formról a servletnek beküldött adatokat a request.getParameter() - el tudjuk kiszedni (olyan mint php-ben a $_GET[])
