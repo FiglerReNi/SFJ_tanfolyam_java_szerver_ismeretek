@@ -1,0 +1,305 @@
+JSP
+	• java server pages -> a html-t fogalmazhatjuk meg benne és írhatunk bele java kódot is.
+	• A formról a servletnek beküldött adatokat a request.getParameter() - el tudjuk kiszedni (olyan mint php-ben a $_GET[])
+	• Javaból érkező attribute kiolvasása expression language használatával: ${name}
+	• Az expression language segítségével tudunk dinamikus adatot tenni a html-be a jsp file-okban.
+	• A jsp file is a servlet része, amit a servletben megírunk itt is meg tudnánk, úgy ahogy a servletben is lehetne html-t írni. De pont azért van a jsp, hogy elkülönüljön a frontend és a backend.
+  • A jsp-ben ha java kódot akarunk írni <% %> jelek közé kell tenni. Érték használata később a html részben <%= %>. Java osztály import: <%@ page import="java.util.Date"%>
+
+Szerver ismeretek:
+  Maven:
+  	• A pom.xml-ben lévő dependency-k alapján letölti automatikusan a szüksége .jar file-okat a project-hez.
+  	• A maven csinál egy local repository-t a saját gépen .m2/repository néven, és ide tölti le a .jar fileokat a távoli repobol, ami a Central Repository.
+  	• A saját brojektünket buildeli automatikusan. A build több lépésből áll, amit a maven megcsinál magától egymás után. Ezt hívjuk Build LifeCycle-nek
+  	Lépései:
+  		Validate
+  		Compile
+  		Test
+  		Package
+  		Integration Test
+  		Verify
+  		Install
+  		Deploy
+  	A buildet az mvn clean install paranccsal tudjuk elindítani. (A clean először töröl mindent a targe folder-ből)
+  Létrehozás:
+  	Maven Project
+  		· maven-archetype-quickstart
+  		· gruop_id, artifact_id, package name kitöltése
+  Előnye:
+  	• Ha nem akarjuk a spring keretrendszert használni, ez ugyanúgy használja a pom.xml-t és kezeli a dependency-ket.
+    • Ha sima java projektet hoznánk létre, ott a külső csomagokat manuálisan kell behúznunk.
+
+  Státuszkódok:
+  	Headerben ékeznek a response-ban (válaszban)
+  		1xx - informatív leírás
+  		2xx - minden rendben
+  			200 - a kérés értelmezve lett és a ráadott válasz is ok
+  			204 - minden ok a kéréssel, de nem kell visszaadni választ
+  		3xx - át leszünk irányítva valahová
+  			301 - a tartalom új címre költözött és átirányítás történik
+  			307 - ideiglenes átirányítás (nem végleges az új cím)
+  		4xx - kliens oldali hiba
+  			400 - hibás lekérdezés
+  			401 - nincs jogosultság a válasz megtekintésére, ilyenkor ált. autentikációra van szükség.
+  			403 - tiltott elérés (akár autentikál akár nem a felhasználó), nem engedélyezett számára a válasz elérése
+  			404 - nem található
+  		5xx - szerver oldali hiba
+  			500 - belső szerver hiba, nem kapunk választ
+  			503 - a szolgáltatás nem elérhető
+
+  Methodok:
+  	• GET
+  		○ paramétereket url-ben adjuk át, látható, elmenthető könyvjelzőként, limitált mennyi paraméter lehet.
+  		○ ezt használjuk adatbázisból kikérdezéshez (pl. select)
+  	• POST
+  		○ nincs limit a paraméterekben, akár fájlokat is küldhetünk, könyvjelzőként nem menthető, valamivel biztonságosabb.
+  		○ A paramétereket a body-ban adjuk át általában json formátumban
+  		○ Ezt használjuk INSERT/UPDATE művelet esetén (adatbázisba írás)
+  	• PUT
+  	• DELETE
+    • CONNECT stb.
+
+  Adatáramlás:
+    	• Amikor első alkalommal ütünk be egy oldalt, hosszabb idő amíg elérjük.
+    	• Másodszorra már le van tárolva a gépen, hogy ahhoz a domain-hez milyen IP tartozik és már automatikusan ezzel indítjuk el a kérést.
+    	• Az adat közel fénysebességgel halad az optikai kábelekben.
+    	• A kommunikáció mindig egy request-response (kérés-válasz) párosból áll:
+    		Request és Response:
+    			§   A request és response is két részből áll:
+    				header - alap adatok
+    					® http státuszkód
+    					® mime type ami a response headerjében info, hogy mit ad vissza a szerver, ez segít a böngészőnek, pl ha pdf-et kap vissza meg tudjuk nyitni a böngészőben pdf-ként ---> ehhez tudnia kell mit kap (típus)
+    						MIME type:
+    							} text/html
+    							} audio/mp3
+    							} image/jpeg
+    				body - ami magát az adatot tartalmazza. (pl html+css+js, mp3 stb.) A böngésző ebből tudja összeállítani az oldalt. Ma már jobban terhelhetőek a böngészők mint régebben voltak, mert a felhasználók gépe nagyobb teljesítményű, így a szerver helyett sok mindent át lehet adni a böngészőnek (régen szinte mindent a szerver végzett). A böngésző tudja futtatni a javascriptet.
+    				Vannak olyan szerverek, amelyek egyáltalán nem adnak vissza html-t, mert pl vannak mobilalkalmazások amelyek webesek és html-t használnak, de vannak a native mobilalkalmazások. Ezek az Iphone/Android grafikus elemeit használják és a szervertől csak adatokat kérnek le. A válasz egyszerű xml vagy json lesz.
+    					® webszerver - html alapú választ ad (weblaphoz)
+    					® soap/rest szerver - xml/json/yaml választ ad (natív mobilalkalmazáshoz, vagy ahol külön van a frontend pl angularban, a backend pedig csak adatot ad)
+    			§ Request: a kérés, benne az IP címemel, a kérésben vannak adatok, a routerem IP címe például, hogy hová kell majd visszaadni az adatot.
+    			§ Response: a válasz, amely apró adatcsomagokból áll. Ez a routerhez érkezik meg, és a router tudja, hogy a hálózatban melyik géphez kell az üzenetet eljuttatni. Az adatok részletekben érkeznek meg a szerverről. Két féle csatornán történhet ez meg: UDP és TCP
+    					® UDP - skype, sportközvetítés, ahol az adatáramlásban nincs ellenőrzés, néha kimaradhat egy-egy részlet, az a fontos, hogy menjen
+    					® TCP - lassabb a kommunikáció, mert folyamatos rákérdezés van az adatcsomagokra, hogy rendben megérkeztek-e. A szerver újraküldi ami nem érkezett meg.
+
+  Fogalmak:
+    Programok elérhetősége:
+    	• Ha mindenki számára elérhetővé szeretnénk tenni a programunkat, a böngészőben mutatjuk meg és tesszük közzé és használhatóvá.  A böngésző, vagy egy mobilapp a kapu a felhasználó felé. A háttérben ugyanaz a program fut, ami a logikát adja. Manapság ez az elterjedtebb az asztali alkalmazással szemben. Böngészős alkalmazás is tud úgy működni, hogy például csak egy céges helyi hálózaton elérhető és nincs port nyitva a szerveren a külső eléréshez.
+    	• Az alkalmazást és a hozzá kapcsolódó adatbázisnak is kell egy szerver környezet. Tehetjük egy szerverre az alkalmazást és az adatbázist, de külön szerveren is lehetnek.  Vannak szerver környezeteket szolgáltató cégek, ahol pár kattintással alakíthatunk ki egy szerver környezetet. Ilyen pl a Heroku. Ennek van ingyenes verziója is.
+    	• Ha csak bizonyos körön belül szeretnénk elérhetővé tenni az alkalmazást, például egy cégen belül, akkor az asztali alkalmazás is jó választás lehet.
+    IP változatok:
+    	A lakossági felhasználónak folyamatosan változó IP címük van általában, a fix jóval drágább. De ez elég is az internetezéshez, mert a másik oldalon lévő fix IP-t elég tudnunk erről az oldalról. Dinamikus ip-hez is lehet domain-t regisztrálni csak jóval bonyolultabb.
+    Domain név:
+    	 Szerver ip címéhez van hozzárendelve, hogy ne az IP címet kelljen beütni a böngészőbe. Ezek fix IP címek.
+    Szerver (Kiszolgáló):
+    	A háttérben futó program/logika, ide jutunk a böngészőn, appon (egyszóval: nézet) keresztül.  Adattárolás, kalkuláció, hozzáférés stb a feladata. A servernek van egy IP címe, amin keresztül elérhetjük és van egy domain neve is, ezt szoktuk beírni a böngésző címsorába, de ha tudjuk az IP címet és azt írjuk be is ugyanoda vezet. Példa cmd -> ping vmilyen webcím (adatcsomagokat küld, így kipróbálható, hogy tényleg létezik-e a webcím és az IP-t is megkapjuk.)
+    F12:
+    	 Böngésző fejlesztői segédje
+    Cachelés:
+    	Bizonyos dolgokat pl képet egy oldalról elment a böngésző, és legközelebb innen tölti be --> gyorsabb lesz, viszont ha frissítik az oldalt új képpel stb, az nem fog befrissülni. --> Fontos, hogy mit engedünk cachel-ni és mit nem. Inkognitó módban nem cachel a böngésző. A számítógépen nem hagy nyomot ez a módszer. De pl ha egy munkahelyen monitorozzák a böngészést ott lászódni fog a meglátogatott weboldal.
+    Postman:
+    	 Szimulálni tudjuk egy szervernek küldött kérést, és látjuk a rá érkezett választ.
+    	 Authorization fül alatt tudjuk kiválasztani milyen típusú autentikációt akarunk tesztelni.
+    Authentikáció:
+    	A felhasználó igazolja, hogy rendelkezik az eléréshez szükséges jogokkal, ezt megteheti pl egy username+password párossal. Ha ez nem sikeres egy http kóddal jelezhetjük, hogy megtagadjuk a válasz adását (pl. 401).
+    Basic (access) authentication:
+    	A request headerjében tudjuk vizsgálni az autentikációt. Ha van, és küldött a felhasználó username + password párost itt tárolódik, innen tudjuk kiolvasni. De a header a username+password párost kódolva tartalmazza. (Base64 eljárással --> bináris adatot csinál). A szerver ezt vissza tudja fejteni. Ugyanabból a szóból mindig ugyanaz a kód lesz, feltörhető, de valamivel biztonságosabb, mint szimplán küldeni. Viszont ez nem elég ezért fontos hogy a kapcsolat https (-ssl/tls) kapcsolat legyen. Ez biztonságos kapcsolat. SSL vagy TLS segítségével titkosítva van az adat.
+    Socket:
+    	Objektum, amit a java program használ, hogy kommunikálni tudjon távoli eszközzel. Küld valamit az én gépemen futó java program ennek segítségével, amit egy másik gép java programja fogadni tud. Ehhez az kell, hogy mindkét gépen telepítve legyen az adott program.
+    Servlet:
+    	Java objektum, amely tud http kérést feldolgozni és tud is rá válaszolni, bele van programozva.
+    	A servlet mindig egyszer van létrehozva és minden felhasználó ugyanazt a példányt fogja visszakapni.
+    	Főbb metódusok (ezeket overideoljuk):
+    		○ DoGet
+    		○ DoPost
+    		○ GetServletInfo – van visszatérési értéke, bármilyen infot beírhatunk amit ki akarunk íratni
+    		○ Init - ez akkor fut le amikor a tomcat létrehozza az adott servletet, minden más előtt tehát - ezért itt csinálhatjuk pl az adatbázis kapcsolatot, kiolvashatunk konfigurációs fájlból adatokat stb.
+    		○ Destroy - amikor a servlet elpusztul akkor fut le, kapcsolatok lezárása, pl. adatbázisé. Fontos, hogy minden olyan kapcsolatot lezárjunk amire van lehetőség. Az adatbázis kapcsolatnak timeout-ot is lehet beállítani, amikor automatikusan bontja a kapcsolatot.
+    Singleton:
+    	Egy példány él belőle a JVM-ben és mindenki ugyanarra az egy objektumra hivatkozik, az osztályváltozók értéke ugyanaz lesz, nem kell külön static-re állítani.
+    	A servlet is így viselkedik, de nem minden esetben, ezért nem mondjuk rá, hogy singleton. Vannak speciális esetei.
+    Konfiguráció:
+    	Xml alapú: web.xml-ben regisztráljuk a servleteket és az útvonalat
+    	Annotáció alapú: Pl.: @WebServlet(name = "feldolgozas", urlPatterns = {"/feldolgozas/*"})
+
+  Szerverek közötti kommunikáció
+    	• Szerverek közötti kommunikáció, adatáramlás lehetősége (mindegy milyen nyelven vannak írva): xml, json, yaml
+    	• A szerverek a megkapott xml, json adatot egy parser segítségével tudják kibontani a saját nyelvüknek megfelelően és állítják össze belőle az objektumot.
+    	• Az xml és json minden nyelvben ugyanúgy fog kinézni.
+    	• Xml - JSON konverterrel megnézhetjük egy adott adatot amit küldeni akarunk mindkét formában.
+    	• JSON validátorral pedig ellenőrizhetjük, hogy helyes-e a formátuma (szerkezete).
+    xml - olvashatóbb
+    json - kevesebb karater, képes különbséget tenni, hogy egy számot számként vagy szövegként küldök
+    yaml - még kevesebb karakter, kapcsos zárójelek nélkül
+
+  Tomcat
+    Fogalma:
+    	• Egy keretrendszer amin képes futni a spring.
+    	• Tomcat-et önmagában is tölthetünk le, de a xampp-ban is benne van.
+    Részei:
+    	• Catalina (itt fut a kód, benne a servlet)
+    	• Coyote (a kapu, fogadja a kéréseket és küldi az adatot, közvetít a Catalina felé)
+    Beállítása:
+    	• conf mappa, server.xml -> connector: itt lehet megadni a localhost port számát, amin keresztül elérjük a böngészőt.
+    	• conf mappa, tomcat-users.xml -> itt tudjuk megadni a jogosultságokat
+    		<role rolename="manager-gui"/>
+    		<role rolename="manager-script"/>
+    		<role rolename="manager-jmx"/>
+    		<role rolename="manager-status"/>
+    		<role rolename="admin-gui"/>
+    		<role rolename="admin-script"/>
+    		<user username="admin" password="admin" roles="manager-gui,manager-script,manager-jmx,manager-status,admin-gui,admin-script"/>
+    Környezeti változók:
+    	A működéshez környezeti változóna be kell állítani:
+    		Rendszerváltozók alá:
+    			▪ JAVA_HOME: C:\Program Files\Java\jdk1.8.0_144
+    			▪ JRE_HOME: C:\Program Files\Java\jre1.8.0_231
+    			▪ CATALINA_HOME: C:\Program Files\Java\xamppJavaTomcat\tomcat
+    		Saját változók:
+    			▪ Path: C:\Program Files\Java\jdk1.8.0_144\bin;C:\Program Files\Java\jre1.8.0_231\bin
+    Indítás:
+    	• cmd -> tartalmazó mappa(tomcat/bin) -> startup.bat
+    	• Ha localhost:8080 esetleg 500-as hibát ad, akkor a tomcat mappán kell megnézni a mappa jogosultságokat
+
+  Server oldali alkalmazás írása keretrendszer nélkül:
+    	Tomcat telepítése
+    	JRE telepítése
+    	Kötelező felépítése:
+    		○ A tomcat-ben van egy webapps mappa, ami a webalkalmazások mappája, ebbe hozzuk létre a saját alkalmazásunk mappáját (ez lesz a servletünk).
+    		○ A webapps mappában vannak már servletek, ezeket látjuk megjelenni a tomcat oldalaként amikor elindítjuk a localhost:8080-at.
+    		○ Ami a web- és meta-inf mappákban van az nem elérhető a felhasználók számára
+    		○ Ami kívül a projektben az igen (html, css, jsp, kép).
+    		○ Az src és classes mappa egymás tükörképei kell legyenek.
+    		○ A compiler fordítja le a .java-t .class-ra.
+    		WEB-INF
+    			▪ src (kódot tárolja .java)
+    			▪ package mappák (egyezik a fájlban a package nevével)
+    			▪ .java fájlok (egyezik az osztály nevével)
+    			▪ lib (függőségek/dependency pl.:itext)
+    			▪ classes (lefordult kód .class) --> ebből lesz a jar fajl
+    			▪ Web.xml (servletek elnevezése, gyűjteménye): deployment descriptor (DD), útvonalak --> mit ír be a felhasználó és milyen servletet ér el ezzel
+    			▪ Konfigurációs fájl: Ebben szokták megadni például az adatbázis kapcsolódáshoz szükséges adatokat stb. Így ha valami változik csak itt kell módosítani. WEB-INF-en belül hozzuk létre, a web.xml mellé. Másik módszer hogy környezeti változóval adjuk meg az útvonalát, bárhol is legyen a szerveren a fájl így be tudom húzni (ez a biztonságosabb)
+    		META-INF
+    	Alkalmazás lefordítása:
+    		.java -> .class
+    		cmd --> web-inf mappa --> javac -d (destination, hová) classes src\test\teszt.java (forrás)
+    	Külső fájlok:
+    		Amiket használok importként a fájlban, az kell létezzen az alkalmazásomban. A tomcat ezeket tartalmazza, csak át kell húznom ami kell. A C:\Program Files\Java\jdk1.8.0_144/jre/lib/ext mappába kell beletenni. Ez (jre) a futtatási környezet. Ha ez rendelkezik az importként használt fájlokkal, akkor az alkalmazásunk látni fogja.
+    		Ha nem tesszük át akkor cmd-ben meg kell adni a használni kívánt import fájl  jar fájljának az útvonalát:
+    			javac -d classes -cp ..\..\..\lib\servlet-api.jar src\test\HelloServlet.java
+    	FrontEnd:
+    		A html/frontend fájlokat a WEB-INF mappán kívül hozzük létre, hogy hozzáférhető legyen és meg tudjuk jeleníteni.
+    		A html-en kívül használhatjuk a JSP-t is
+    		JSP:
+    			▪ java server pages -> automatikusan generál egy servletet, a html-t fogalmazhatjuk meg benne és írhatunk bele java kódot is.
+    			▪ Az alkalmazáson belül, de a WEB-INF mappán kívül hozzuk létre mint a sima html-t.
+    		A formról a servletnek beküldött adatokat a request.getParameter() - el tudjuk kiszedni (olyan mint php-ben a $_GET[])
+
+Linux konfigurálás:
+  OP rendszer alapok:
+    Egy program megírható egy számítógépre, operációs rendszer nélkül is. Régen így készültek a programok, egy számítógép egy adott programot tudott futtatni, ami az adott hardverre lett optimalizálva. Ekkor a programnak kezelnie kellett a hardvert is. Meg kellett például mondani, hogy mennyi memóriát adjunk a programnak. Az operációs rendszerek átveszik ezeket a feladatokat, a rendszermag (kernel) kezeli a hardver erőforrásait. Így ezek megjelenése óta az operációs rendszerre írjuk a programokat.
+    Operációs rendszerek:
+    	Windows:
+    		Kezdetben csak command line-on keresztül működött, később jelent meg hozzá grafikus felület is. Mindig gyorsabb, ha nincs grafikus felület és command line-on keresztül kell kommunikálni.
+    	Linux:
+    		Linus Torvalds hozta létre
+    		GNU licence alapján tette közzé a kódját:
+    			- Nyílt forráskódú
+    			- Aki fejleszt rajta, kötelezően elérhetővé kell tennie a kódját
+    		Különböző disztribúciók jöttek létre
+    				□ Ubuntu
+    				□ Suse
+    				□ Centos
+    				□ Debian
+    				□ Fedora
+    				□ Red Hat
+    			- Hasonlóak egymáshoz, de különböző modulok vannak bennük
+    			- UNIX alapú rendszer
+    			- Gyors
+    			- Megbízható
+    			- Mivel moduláris, ezért minimalizálható => csak azokat a modulokat használjuk amire tényleg szükségünk van.
+    Parancsok:
+    	Az op rendszerek parancsai eltérnek egymástól, de sok hasonlóság is van bennük.
+
+  Linux alap szerkezet:
+    Mappák, amik minden linux változatban általánosságban megvannak, kevés eltéréssel:
+    	bin
+    	dev
+    	home
+    	mnt
+    	proc
+    	run
+    	srv
+    	tmp
+    	var
+    	boot
+    	etc
+    	lib
+    	media
+    	opt - ebbe a mappába teszzük azokat a programokat, amik a server futásához nem szükségesek, opcionálisak, az alkalmazásunk futtatásához kell pl (tomcat) stb
+    	root
+    	sys
+    	usr
+    	• Linuxon nincsenek meghajtók. Fa struktúra jellemzi. A hozzá adott eszközök (pl. nyomtató is ebbe illeszkedik bele.)
+    	• A bin folderben találhatóak a használható parancsok, programok
+    	• A felhasználókat csoportokba lehet rendezni, és így csoportonként lehet jogokat adni
+
+  Linux jogosultságok:
+    	• Csoport szintű
+    	• Felhasználó szintű
+    	• MIndenkire vonatkozó
+    	• Tulajdonosi jogok
+    		○ egy file tulajdonosát például megadhatjuk felhasználói szinten és csoportszinten is
+    	• Hozzáférési jogok
+    		○ ki mit tud kezdeni az adott file-al, ez is lehet felhasználói, csoport szintú vagy mindenkire vonatkozó
+    Formátuma:
+    drwxr-xr-x.  root tomcat
+    	• 1. karater:
+    		'-' fájl
+    		'd' könyvtár
+    		'l' link
+    	• 2-10. karater:
+    		Jogosultsági szintenként jelzi az írás/olvasás/végrehajtás jogokat (read/write/execute - rwx)
+    		○ felhasználó (2-3-4 karakter)
+    		○ csoport (5-6-7 karakter)
+    		○ mindenki (8-9-10 karakter)
+    	• A jogosultságok mellett látjuk a felhasználói szintű tulajdonost és a csoport szintű tulajdonost
+
+  Szerverek kezelése:
+    Az alkalmazások futtatásához 0-24-ben bekapcsolt szerverkörnyezet kell. Így fogják tudni a felhasználók bármikor elérni.
+    Ahhoz hogy elérjünk egy szervert három alkalmazás közül választhatunk:
+    	Cygwin
+    		○  https://www.cygwin.com/
+    	PuTTY
+    		○ https://www.digitalocean.com/docs/droplets/how-to/connect-with-ssh/putty/
+    		○ https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html
+    	GitBash
+    Ezek segítségével ssh-n keresztül tudunk bejelentkezni a saját szerverünkre. Az ssh (Secure Shell - protokoll) biztonságos kapcsolatot tesz lehetővé a saját gépünk és egy távoli szerver között.
+    Command line:
+    ssh root@IP cím (Mindig root felhasználóval jelentkezzünk be, mert annak van admin joga)
+    droplet password
+
+  DigitalOcean:
+    Linux szerverkörnyezet létrehozása:
+    	• Linuxos gép
+    	• Windows-os gép esetén csinálhatunk egy virtuális gépet amin linux fut (VirtualBox)
+    	• Bérlünk valamilyen szolgáltatótól
+    		Webcím:  https://www.digitalocean.com/
+    			○ A regisztráció ingyenes, a szerver bérlése viszont pénzbe kerül. Ha kikapcsoljuk a szervert kevesebbet számláz (fenntartási költség). Ha teljesen töröljük, akkor nem számláznak.
+    			○ Dropleteket lehet létrehozni, ami egy felhőben lévő hatalmas erőforrásból egy szelet, amit rendelkezésünkre bocsát a szolgáltató. Különböző operációs rendszerek választhatók. A CentOS-al dolgozunk.
+    			○ El kell neveznünk a dropletet a hostname mezőnél, bármilyen nevet adhatunk.
+    			○ Ha minden kész és be van kapcsolva, tudjuk ellenőrizni, hogy elérjük-e a ping IP cím paranccsal konzolból.
+    Droplet elérése:
+    	Access -> Launch Reovery Console
+    		Elindul egy virtuális terminál, ahol kérni fog egy jelszót, amit emailben megkaptunk vagy beállítottunk, amikor létrehoztuk a dropletet.
+    		A megjenenő consolban:
+    			login: root
+    			password: a droplet jelszava
+    			https://www.digitalocean.com/docs/droplets/resources/console/
+
+
+
+
+
+
+
